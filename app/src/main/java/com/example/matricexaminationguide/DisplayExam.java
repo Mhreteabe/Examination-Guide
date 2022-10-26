@@ -23,8 +23,13 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class DisplayExam extends AppCompatActivity {
-     String subject;
-     String year;
+    String subject;
+    String year;
+    ExamDatabaseHelper databaseHelper;
+    SQLiteDatabase db;
+    ImageView[] questions;
+    RadioGroup[] answers;
+    RadioButton[] choices;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +39,8 @@ public class DisplayExam extends AppCompatActivity {
         year=intent.getStringExtra("year");
         //System.out.println("in displayexam subject is "+subject);
         LinearLayout linear=(LinearLayout) findViewById(R.id.linear_layout);
-        ExamDatabaseHelper databaseHelper=new ExamDatabaseHelper(this);
-        SQLiteDatabase db=databaseHelper.getWritableDatabase();
+        databaseHelper=new ExamDatabaseHelper(this);
+        db=databaseHelper.getWritableDatabase();
         addAnswer(databaseHelper,db);
         Cursor cursor=databaseHelper.select(db,
                 "Info2",
@@ -46,9 +51,10 @@ public class DisplayExam extends AppCompatActivity {
         //System.out.println("length of select num questions "+cursor.getCount());
         cursor.moveToNext();
         int num_questions=cursor.getInt(0);
-        ImageView[] questions=new ImageView[num_questions];
-        RadioGroup[] answers= new RadioGroup[num_questions];
-        RadioButton[] choices=new RadioButton[num_questions*4];
+        questions=new ImageView[num_questions];
+        answers= new RadioGroup[num_questions];
+        choices=new RadioButton[num_questions*4];
+
         for(int i=0;i<num_questions;i++){
             addAnswers(answers,choices,i);
             questions[i]=new ImageView(this);
@@ -127,13 +133,42 @@ public class DisplayExam extends AppCompatActivity {
             btns[i]=new RadioButton(this);
             btns[i].setText(label);
             grp[question_idx].addView(btns[i]);
+
+
+        }
+        //this code will enable us to recover saved state for users
+        Cursor cursor=databaseHelper.select(db,"UserState",new String[]{"answer"},"subject=? and year=? and question_no=?",new String[]{subject,year,String.valueOf(question_idx+1)},null);
+        if (cursor.getCount()>0){
+            cursor.moveToFirst();
+            int ans_index=cursor.getInt(0);
+             RadioButton btn =(RadioButton) grp[question_idx].getChildAt(ans_index);
+             btn.setChecked(true);
+             //then we should reset the states
         }
     }
 
     public void showScore(View v){
 
-    }
-    public void saveAndExit(View v){
 
     }
+    public void saveAndExit(View v){
+        for(int i=0;i<answers.length;i++){
+            if(answers[i].getCheckedRadioButtonId() != -1){
+                int button_id=answers[i].getCheckedRadioButtonId();
+                RadioButton btn=findViewById(button_id);
+                int ans_index=answers[i].indexOfChild(btn);
+                ContentValues values =new ContentValues();
+                values.put("subject",subject);
+                values.put("year",year);
+                values.put("question_no",String.valueOf(i+1));
+                values.put("answer",String.valueOf(ans_index));
+                databaseHelper.insert(db,"UserState",values);
+            }
+        }
+        Intent i=new Intent(this,ExamsByYear.class);
+        i.putExtra("subject",subject);
+        startActivity(i);
+    }
+
+
 }

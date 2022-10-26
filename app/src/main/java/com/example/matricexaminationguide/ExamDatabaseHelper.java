@@ -45,11 +45,19 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 "grade integer,"+
                 "question_no integer,"+
                 "answer text);";
+        String create_userstate_table="Create Table UserState("+
+                "_id Integer primary key autoincrement,"+
+                "subject text,"+
+                "year integer,"+
+                "question_no integer,"+
+                "answer integer);";
+
 
         String [] queries = new String[]{
                 create_info_table,
                 create_info_table2,
-                create_question_table
+                create_question_table,
+                create_userstate_table
         };
         for (String query:queries){
             db.execSQL(query);
