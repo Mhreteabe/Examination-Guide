@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -36,6 +38,9 @@ public class DisplayExam extends AppCompatActivity {
     RadioButton[] choices;
     TextView[] comments;
     LinearLayout linear;
+    ScrollView scroll_view=null;
+    Button next,previous;
+    int current_question_index=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,6 +250,80 @@ public class DisplayExam extends AppCompatActivity {
         i.putExtra("subject",subject);
         startActivity(i);
     }
+  public void switchToSingleMode(View v){
+      Switch btn=(Switch) v;
+      if(scroll_view == null){
+          scroll_view=(ScrollView) findViewById(R.id.scroll_view);
+      }
+      LinearLayout main_layout=(LinearLayout) findViewById(R.id.mainLinearLayout);
+      if(btn.isChecked()){
+          next=new Button(this);
+          previous=new Button(this);
+          next.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
 
+
+                  main_layout.removeView(questions[current_question_index]);
+                  main_layout.removeView(answers[current_question_index]);
+                  main_layout.removeView(comments[current_question_index]);
+                  current_question_index+=1;
+
+                  linear.removeView(questions[current_question_index]);
+                  linear.removeView(answers[current_question_index]);
+                  linear.removeView(comments[current_question_index]);
+                  main_layout.addView(questions[current_question_index]);
+                  main_layout.addView(answers[current_question_index]);
+                  main_layout.addView(comments[current_question_index]);
+              }
+          });
+          previous.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+
+                  main_layout.removeView(questions[current_question_index]);
+                  main_layout.removeView(answers[current_question_index]);
+                  main_layout.removeView(comments[current_question_index]);
+                  current_question_index-=1;
+
+                  linear.removeView(questions[current_question_index]);
+                  linear.removeView(answers[current_question_index]);
+                  linear.removeView(comments[current_question_index]);
+                  main_layout.addView(questions[current_question_index]);
+                  main_layout.addView(answers[current_question_index]);
+                  main_layout.addView(comments[current_question_index]);
+              }
+          });
+          main_layout.removeView(scroll_view);
+          linear.removeView(questions[0]);
+          linear.removeView(answers[0]);
+          linear.removeView(comments[0]);
+          next.setText("next");
+          previous.setText("previous");
+          main_layout.addView(next);
+          main_layout.addView(previous);
+          main_layout.addView(questions[0]);
+          main_layout.addView(answers[0]);
+          main_layout.addView(comments[0]);
+
+      }
+      else{
+          main_layout.removeView(questions[current_question_index]);
+          main_layout.removeView(answers[current_question_index]);
+          main_layout.removeView(comments[current_question_index]);
+          current_question_index=0;
+          linear.removeAllViews();
+          for (int i=0;i<questions.length;i++){
+              linear.addView(questions[i]);
+              linear.addView(answers[i]);
+              linear.addView(comments[i]);
+
+          }
+          main_layout.removeView(next);
+          main_layout.removeView(previous);
+          main_layout.addView(scroll_view);
+      }
+
+  }
 
 }
