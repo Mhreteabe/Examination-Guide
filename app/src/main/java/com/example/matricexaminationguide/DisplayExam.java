@@ -146,6 +146,30 @@ public class DisplayExam extends AppCompatActivity {
         }
 
     }
+
+
+    public void updateExamStatisticsTable(int number_of_attempted_questions,int correct_number_of_questions){
+        String []cols={"attempt_number"};
+        String where="subject=? and year=?";
+        String []where_vals= {subject,year};
+        Cursor cursor=databaseHelper.select(db,"ExamStatistics",cols,where,where_vals,null);
+        if (cursor.getCount()>=1) {
+            //lets get the number of the last attempt
+            cursor.moveToLast();
+            int last_attempt_number=cursor.getInt(0);
+            //lets add the current attempt to the database
+            ContentValues values=new ContentValues();
+            values.put("subject",subject);
+            values.put("year",year);
+            values.put("attempt_number",last_attempt_number+1);
+            values.put("number_of_attempted_questions",number_of_attempted_questions);
+            values.put("correct_number_of_questions",correct_number_of_questions);
+            databaseHelper.insert(db,"ExamStatistics",values);
+        }
+        }
+
+
+
     public void showScore(View v){
         int total_questions=answers.length;
         int attempted=0;
@@ -188,8 +212,14 @@ public class DisplayExam extends AppCompatActivity {
                     updateQuestionStatisticsTable(question_no,is_correct);
                 }
         }
+        //since the user is finished ,let's disable the finish button
+            Button finish=(Button)v;
+            finish.setEnabled(false);
 
          }
+        //lets update our ExamStatisticsDatabase
+        updateExamStatisticsTable(attempted,correct);
+        //lets display the result to the user
         TextView textView=findViewById(R.id.answer_display_area);
         textView.setText("total questions:"+total_questions+"\n"+"attempted questions:"+attempted+"\n"+"correct:"+correct);
         textView.setTextColor(Color.BLACK);

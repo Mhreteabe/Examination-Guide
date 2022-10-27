@@ -65,12 +65,21 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 "question_no integer,"+
                 "number_of_attempts integer,"+
                 "number_of_correct_attempts integer);";
+        String create_exam_statistics_table="Create Table ExamStatistics("+
+                "_id Integer primary key autoincrement,"+
+                "subject text,"+
+                "year integer,"+
+                "attempt_number integer,"+
+                "number_of_attempted_questions integer,"+
+                "correct_number_of_questions integer"+");";
+
         String [] queries = new String[]{
                 create_info_table,
                 create_info_table2,
                 create_question_table,
                 create_userstate_table,
-                create_question_statistics_table
+                create_question_statistics_table,
+                create_exam_statistics_table
         };
         for (String query:queries){
             db.execSQL(query);
@@ -86,6 +95,16 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
              values.put("year",year);
              insert(db,"Info",values);
             }
+            //lets initialize the ExamStatistics table
+            values.put("attempt_number",0);
+            values.put("number_of_attempted_questions",0);
+            values.put("correct_number_of_questions",0);
+            insert(db,"ExamStatistics",values);
+            //now lets remove the cols
+            values.remove("attempt_number");
+            values.remove("number_of_attempted_questions");
+            values.remove("correct_number_of_questions");
+
         }
 
         Map<String, Object> subject_to_numquestions = new HashMap<String, Object>();
