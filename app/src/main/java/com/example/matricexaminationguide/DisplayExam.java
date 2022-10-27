@@ -127,6 +127,8 @@ public class DisplayExam extends AppCompatActivity {
              RadioButton btn =(RadioButton) grp[question_idx].getChildAt(ans_index);
              btn.setChecked(true);
              //then we should reset the states
+            databaseHelper.delete(db,"UserState","subject=? and year=? and question_no=?",new String[]{subject,year,String.valueOf(question_idx+1)});
+
         }
     }
     public void updateQuestionStatisticsTable(int question_no,boolean is_correct){
@@ -231,24 +233,32 @@ public class DisplayExam extends AppCompatActivity {
         textView.setBackgroundColor(Color.WHITE);
         textView.setGravity(Gravity.CENTER);
     }
-    public void saveAndExit(View v){
-        System.out.println("in save and exit");
-        for(int i=0;i<answers.length;i++){
-            if(answers[i].getCheckedRadioButtonId() != -1){
-                int button_id=answers[i].getCheckedRadioButtonId();
-                RadioButton btn=findViewById(button_id);
-                int ans_index=answers[i].indexOfChild(btn);
-                ContentValues values =new ContentValues();
-                values.put("subject",subject);
-                values.put("year",year);
-                values.put("question_no",String.valueOf(i+1));
-                values.put("answer",String.valueOf(ans_index));
-                databaseHelper.insert(db,"UserState",values);
+    public void saveAndExit(View v) {
+        Button finish_btn = (Button) findViewById(R.id.finish);
+        if (finish_btn.isEnabled() == false) {
+            Intent i = new Intent(this, ExamsByYear.class);
+            i.putExtra("subject", subject);
+            startActivity(i);
+
+        } else {
+            System.out.println("in save and exit");
+            for (int i = 0; i < answers.length; i++) {
+                if (answers[i].getCheckedRadioButtonId() != -1) {
+                    int button_id = answers[i].getCheckedRadioButtonId();
+                    RadioButton btn = findViewById(button_id);
+                    int ans_index = answers[i].indexOfChild(btn);
+                    ContentValues values = new ContentValues();
+                    values.put("subject", subject);
+                    values.put("year", year);
+                    values.put("question_no", String.valueOf(i + 1));
+                    values.put("answer", String.valueOf(ans_index));
+                    databaseHelper.insert(db, "UserState", values);
+                }
             }
+            Intent i = new Intent(this, ExamsByYear.class);
+            i.putExtra("subject", subject);
+            startActivity(i);
         }
-        Intent i=new Intent(this,ExamsByYear.class);
-        i.putExtra("subject",subject);
-        startActivity(i);
     }
   public void switchToSingleMode(View v){
       Switch btn=(Switch) v;

@@ -32,12 +32,14 @@
                 android:layout_height="wrap_content"
                 android:text="save and exit"
                 android:onClick="saveAndExit"
+
                 />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="showScore"
                 android:text="Finish"
+                android:id="@+id/finish"
                 android:paddingLeft="20dp"
                 />
         </LinearLayout>
