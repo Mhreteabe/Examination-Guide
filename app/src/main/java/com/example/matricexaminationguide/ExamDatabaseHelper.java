@@ -63,9 +63,9 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(query);
         }
         Map<String, Object> subject_to_year = new HashMap<String, Object>();
-        subject_to_year.put("Maths",new int[]{2010,2011,2012,2013,2014});
-        subject_to_year.put("Physics",new int[]{2010,2011,2012,2013,2014});
-        subject_to_year.put("Aptitude",new int[]{2010,2011,2012,2013,2014});
+        subject_to_year.put("math",new int[]{2010,2011,2012,2013,2014});
+        subject_to_year.put("physics",new int[]{2010,2011,2012,2013,2014});
+        subject_to_year.put("aptitude",new int[]{2010,2011,2012,2013,2014});
         ContentValues values=new ContentValues();
         for (String subject : subject_to_year.keySet()) {
             for (int year:(int[])subject_to_year.get(subject)){
@@ -76,9 +76,9 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
         }
 
         Map<String, Object> subject_to_numquestions = new HashMap<String, Object>();
-        subject_to_numquestions.put("Maths",20);
-        subject_to_numquestions.put("Physics",50);
-        subject_to_numquestions.put("Aptitude",60);
+        subject_to_numquestions.put("math",20);
+        subject_to_numquestions.put("physics",50);
+        subject_to_numquestions.put("aptitude",60);
         values=new ContentValues();
         for (String subject : subject_to_numquestions.keySet()) {
             values.put("subject",subject);

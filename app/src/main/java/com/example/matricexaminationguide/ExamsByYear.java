@@ -19,7 +19,7 @@ public class ExamsByYear extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exams_by_year);
         Intent intent=getIntent();
-        subject=intent.getStringExtra("subject");
+        subject=intent.getStringExtra("subject").toLowerCase();
         //System.out.println("selcted subject"+subject);
         databaseHelper=new ExamDatabaseHelper(this);
         SQLiteDatabase db=databaseHelper.getWritableDatabase();

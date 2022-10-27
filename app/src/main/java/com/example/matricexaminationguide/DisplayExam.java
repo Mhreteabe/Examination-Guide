@@ -1,5 +1,7 @@
 package com.example.matricexaminationguide;
 
+import static java.sql.DriverManager.println;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,15 +33,17 @@ public class DisplayExam extends AppCompatActivity {
     ImageView[] questions;
     RadioGroup[] answers;
     RadioButton[] choices;
+    TextView[] comments;
+    LinearLayout linear;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_exam);
         Intent intent=getIntent();
-        subject=intent.getStringExtra("subject");
+        subject=intent.getStringExtra("subject").toLowerCase();
         year=intent.getStringExtra("year");
         //System.out.println("in displayexam subject is "+subject);
-        LinearLayout linear=(LinearLayout) findViewById(R.id.linear_layout);
+        linear=(LinearLayout) findViewById(R.id.linear_layout);
         databaseHelper=new ExamDatabaseHelper(this);
         db=databaseHelper.getWritableDatabase();
         addAnswer(databaseHelper,db);
@@ -54,6 +59,7 @@ public class DisplayExam extends AppCompatActivity {
         questions=new ImageView[num_questions];
         answers= new RadioGroup[num_questions];
         choices=new RadioButton[num_questions*4];
+        comments=new TextView[num_questions];
 
         for(int i=0;i<num_questions;i++){
             addAnswers(answers,choices,i);
@@ -66,13 +72,20 @@ public class DisplayExam extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             ));
-            String mDrawableName = subject.toLowerCase().substring(0,4)+"_"+year+"_"+(i+1);
+            String mDrawableName = subject+"_"+year+"_"+(i+1);
             //System.out.println("the image name is "+mDrawableName);
             int resID = getResources().getIdentifier(mDrawableName , "drawable", getPackageName());
             //System.out.println("the resource id of the image is "+resID);
             questions[i].setImageResource(resID);
             linear.addView(questions[i]);
             linear.addView(answers[i]);
+            //lets add the comment textview for later use
+            comments[i]=new TextView(this);
+            comments[i].setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            linear.addView(comments[i]);
         }
 
 
@@ -148,10 +161,35 @@ public class DisplayExam extends AppCompatActivity {
     }
 
     public void showScore(View v){
+        int total_questions=answers.length;
+        int attempted=0;
+        int correct=0;
+        String []cols={"question_no","answer"};
+        String where="subject=? and year=?";
+        String []where_vals= {subject,year};
+        Cursor cursor=databaseHelper.select(db,"Question",cols,where,where_vals,null);
+        System.out.println("cursor length"+cursor.getCount());
+        if (cursor.getCount()>0){
+            while (cursor.moveToNext()){
+                int question_no=cursor.getInt(0);
+                String ans=cursor.getString(1);
+                if(answers[question_no-1].getCheckedRadioButtonId() != -1){
+                    int button_id=answers[question_no-1].getCheckedRadioButtonId();
+                    RadioButton btn=findViewById(button_id);
+                    int ans_index=answers[question_no-1].indexOfChild(btn);
+                    attempted+=1;
+                if (ans_index=="ABCD".indexOf(ans)){
+                    correct+=1;
+                }
 
-
+            }
+        }
+         }
+        TextView textView=findViewById(R.id.answer_display_area);
+        textView.setText("total questions:"+total_questions+"\n"+"attempted questions:"+attempted+"\n"+"correct:"+correct);
     }
     public void saveAndExit(View v){
+        System.out.println("in save and exit");
         for(int i=0;i<answers.length;i++){
             if(answers[i].getCheckedRadioButtonId() != -1){
                 int button_id=answers[i].getCheckedRadioButtonId();
