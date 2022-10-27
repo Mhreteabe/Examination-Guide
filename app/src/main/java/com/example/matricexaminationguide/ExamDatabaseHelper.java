@@ -44,7 +44,7 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 "_id Integer primary key autoincrement,"+
                 "subject text,"+
                 "year integer,"+
-                "chapter text,"+
+                "chapter integer,"+
                 "grade integer,"+
                 "question_no integer,"+
                 "answer text);";
@@ -54,13 +54,23 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 "year integer,"+
                 "question_no integer,"+
                 "answer integer);";
-
-
+        //for nahom
+        //you should use the following 2 tables to do the analysis
+        String create_question_statistics_table="Create Table QuestionStatistics("+
+                "_id Integer primary key autoincrement,"+
+                "subject text,"+
+                "year integer,"+
+                "chapter integer,"+
+                "grade integer,"+
+                "question_no integer,"+
+                "number_of_attempts integer,"+
+                "number_of_correct_attempts integer);";
         String [] queries = new String[]{
                 create_info_table,
                 create_info_table2,
                 create_question_table,
-                create_userstate_table
+                create_userstate_table,
+                create_question_statistics_table
         };
         for (String query:queries){
             db.execSQL(query);
@@ -163,7 +173,7 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 String header[]=reader.readLine().split(",");
                 String subject=header[0];
                 String year=header[1];
-                //System.out.println("inside of add answer for"+year+subject);
+                //System.out.println("i_nside of add answer for"+year+subject);
                 String []cols=reader.readLine().split(",");//this is done to pass the cols
                 String line;
                 while ((line=reader.readLine())!=null) {
@@ -177,6 +187,13 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                     }
 
                     helper.insert(db,"Question",values);
+                    //we are gone load our statistics table
+                    //to do that we are gone remove the answer column
+                    //also we are gone add number_of_attempts and number_of_correct_attempts column
+                    values.remove("answer");
+                    values.put("number_of_attempts",0);
+                    values.put("number_of_correct_attempts",0);
+                    helper.insert(db,"QuestionStatistics",values);
                 }
                 reader.close();
             } catch (IOException e) {

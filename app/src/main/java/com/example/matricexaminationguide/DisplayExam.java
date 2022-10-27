@@ -92,42 +92,6 @@ public class DisplayExam extends AppCompatActivity {
 
     }
 
-    public void addAnswer(ExamDatabaseHelper helper,SQLiteDatabase db) {
-        String math_2014 = "maths_2014.txt";
-        String[] filenames = new String[]{
-                math_2014
-        };
-
-        for (String path : filenames) {
-            //System.out.println(path);
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(
-                        new InputStreamReader(getAssets().open(path)));
-                String header[]=reader.readLine().split(",");
-                String subject=header[0];
-                String year=header[1];
-                //System.out.println("inside of add answer for"+year+subject);
-                String []cols=reader.readLine().split(",");//this is done to pass the cols
-                String line;
-                while ((line=reader.readLine())!=null) {
-                    String[]data=line.split(",");
-                    ContentValues values = new ContentValues();
-                    values.put("subject",subject.trim());
-                    values.put("year",year.trim());
-                    for (int i=0;i<cols.length;i++){
-                        //System.out.println(cols[i].trim()+"  "+data[i].trim());
-                        values.put(cols[i].trim(),data[i].trim());
-                    }
-
-                    helper.insert(db,"Question",values);
-                }
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     public void addAnswers(RadioGroup[]grp,RadioButton[]btns,int question_idx){
@@ -160,7 +124,28 @@ public class DisplayExam extends AppCompatActivity {
              //then we should reset the states
         }
     }
+    public void updateQuestionStatisticsTable(int question_no,boolean is_correct){
+        String []cols={"number_of_attempts","number_of_correct_attempts"};
+        String where="subject=? and year=? and question_no=?";
+        String []where_vals= {subject,year,String.valueOf(question_no)};
+        Cursor cursor=databaseHelper.select(db,"QuestionStatistics",cols,where,where_vals,null);
+        if (cursor.moveToFirst()){
+            int number_of_attempts=cursor.getInt(0);
+            int number_of_correct_attempts=cursor.getInt(0);
+            //the number_of_attempts should increase whether the student got the question right or wrong
+            number_of_attempts+=1;
+            //number_of_correct_attempts should only increase when the student is correct
+            if (is_correct){
+                number_of_correct_attempts+=1;
+            }
+            //we should save our changes to the database
+            ContentValues values=new ContentValues();
+            values.put("number_of_attempts",number_of_attempts);
+            values.put("number_of_correct_attempts",number_of_correct_attempts);
+            databaseHelper.update(db,"QuestionStatistics",values,where,where_vals);
+        }
 
+    }
     public void showScore(View v){
         int total_questions=answers.length;
         int attempted=0;
@@ -181,13 +166,15 @@ public class DisplayExam extends AppCompatActivity {
                         RadioButton btn=findViewById(button_id);
                         int ans_index=answers[question_no-1].indexOfChild(btn);
                         attempted+=1;
-                    if (ans_index=="ABCD".indexOf(ans)){
+                        boolean is_correct;
+                        if (ans_index=="ABCD".indexOf(ans)){
                         correct+=1;
-                        //set the color of button group to yellow
+                        //set the color of button group to Green
                         answers[question_no-1].setBackgroundColor(Color.GREEN);
                         //give him an explanation
                         comments[question_no-1].setText("Well done!");
                         comments[question_no-1].setGravity(Gravity.CENTER);
+                        is_correct=true;
                     }
                     else{
                         //since the user got the question wrong set the background color to red
@@ -195,9 +182,11 @@ public class DisplayExam extends AppCompatActivity {
                         //give him an explanation
                         comments[question_no-1].setText("Try again");
                         comments[question_no-1].setGravity(Gravity.CENTER);
+                        is_correct=false;
                     }
-
-            }
+                    //we should update the QuestionStatistics table only if the question is attempted
+                    updateQuestionStatisticsTable(question_no,is_correct);
+                }
         }
 
          }
