@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -46,7 +47,7 @@ public class DisplayExam extends AppCompatActivity {
         linear=(LinearLayout) findViewById(R.id.linear_layout);
         databaseHelper=new ExamDatabaseHelper(this);
         db=databaseHelper.getWritableDatabase();
-        addAnswer(databaseHelper,db);
+        //addAnswer(databaseHelper,db);
         Cursor cursor=databaseHelper.select(db,
                 "Info2",
                 new String[]{"num_questions"},
@@ -60,7 +61,6 @@ public class DisplayExam extends AppCompatActivity {
         answers= new RadioGroup[num_questions];
         choices=new RadioButton[num_questions*4];
         comments=new TextView[num_questions];
-
         for(int i=0;i<num_questions;i++){
             addAnswers(answers,choices,i);
             questions[i]=new ImageView(this);
@@ -72,6 +72,7 @@ public class DisplayExam extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             ));
+            answers[i].setGravity(Gravity.CENTER);
             String mDrawableName = subject+"_"+year+"_"+(i+1);
             //System.out.println("the image name is "+mDrawableName);
             int resID = getResources().getIdentifier(mDrawableName , "drawable", getPackageName());
@@ -164,29 +165,47 @@ public class DisplayExam extends AppCompatActivity {
         int total_questions=answers.length;
         int attempted=0;
         int correct=0;
+        attempted=0;
+        correct=0;
         String []cols={"question_no","answer"};
         String where="subject=? and year=?";
         String []where_vals= {subject,year};
         Cursor cursor=databaseHelper.select(db,"Question",cols,where,where_vals,null);
-        System.out.println("cursor length"+cursor.getCount());
+        //System.out.println("cursor length"+cursor.getCount()+"attempted and correct"+attempted+","+correct);
         if (cursor.getCount()>0){
             while (cursor.moveToNext()){
                 int question_no=cursor.getInt(0);
                 String ans=cursor.getString(1);
                 if(answers[question_no-1].getCheckedRadioButtonId() != -1){
-                    int button_id=answers[question_no-1].getCheckedRadioButtonId();
-                    RadioButton btn=findViewById(button_id);
-                    int ans_index=answers[question_no-1].indexOfChild(btn);
-                    attempted+=1;
-                if (ans_index=="ABCD".indexOf(ans)){
-                    correct+=1;
-                }
+                        int button_id=answers[question_no-1].getCheckedRadioButtonId();
+                        RadioButton btn=findViewById(button_id);
+                        int ans_index=answers[question_no-1].indexOfChild(btn);
+                        attempted+=1;
+                    if (ans_index=="ABCD".indexOf(ans)){
+                        correct+=1;
+                        //set the color of button group to yellow
+                        answers[question_no-1].setBackgroundColor(Color.GREEN);
+                        //give him an explanation
+                        comments[question_no-1].setText("Well done!");
+                        comments[question_no-1].setGravity(Gravity.CENTER);
+                    }
+                    else{
+                        //since the user got the question wrong set the background color to red
+                        answers[question_no-1].setBackgroundColor(Color.RED);
+                        //give him an explanation
+                        comments[question_no-1].setText("Try again");
+                        comments[question_no-1].setGravity(Gravity.CENTER);
+                    }
 
             }
         }
+
          }
         TextView textView=findViewById(R.id.answer_display_area);
         textView.setText("total questions:"+total_questions+"\n"+"attempted questions:"+attempted+"\n"+"correct:"+correct);
+        textView.setTextColor(Color.BLACK);
+        textView.setBackgroundColor(Color.WHITE);
+        textView.setGravity(Gravity.CENTER);
     }
     public void saveAndExit(View v){
         System.out.println("in save and exit");

@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -17,12 +18,14 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 import java.io.File;
+import androidx.appcompat.app.AppCompatActivity;
 public class ExamDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME="EXAMS";
     private static final int DB_VERSION=1;
-
+    private  Context context;
     ExamDatabaseHelper(Context context){
         super(context,DB_NAME,null,DB_VERSION);
+        this.context=context;
         //System.out.println("in examdatabase helper constructor");
     }
 
@@ -88,6 +91,8 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
         //selectall(db,"Info");
         //selectall(db,"Info2");
 
+        //lets try to add the answers to the db
+        addAnswer(this,db);
 
     }
 
@@ -95,6 +100,7 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldversion, int newversion) {
 
     }
+
 
     public  long insert(SQLiteDatabase db, String table_name, ContentValues values){
         long res=db.insert(table_name,null,values);
@@ -142,4 +148,41 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
 
         return cursor;
     }
+    public void addAnswer(ExamDatabaseHelper helper,SQLiteDatabase db) {
+        String math_2014 = "maths_2014.txt";
+        String[] filenames = new String[]{
+                math_2014
+        };
+
+        for (String path : filenames) {
+            //System.out.println(path);
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(
+                        new InputStreamReader(context.getAssets().open(path)));
+                String header[]=reader.readLine().split(",");
+                String subject=header[0];
+                String year=header[1];
+                //System.out.println("inside of add answer for"+year+subject);
+                String []cols=reader.readLine().split(",");//this is done to pass the cols
+                String line;
+                while ((line=reader.readLine())!=null) {
+                    String[]data=line.split(",");
+                    ContentValues values = new ContentValues();
+                    values.put("subject",subject.trim());
+                    values.put("year",year.trim());
+                    for (int i=0;i<cols.length;i++){
+                        //System.out.println(cols[i].trim()+"  "+data[i].trim());
+                        values.put(cols[i].trim(),data[i].trim());
+                    }
+
+                    helper.insert(db,"Question",values);
+                }
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
