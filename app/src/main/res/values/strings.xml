@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">matric examination guide</string>
+
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+
+    <!-- Paste BOTH strings as required -->
+    <string name="back4app_app_id">cuDoafOw0HOlTsl8lU4g4XH067yrYGCYVao7z5Fe</string>
+    <string name="back4app_client_key">wTeduNNnMC1OV3Jim0Mf9ar2YpoOQ6eo4iAJWC8Q</string>
 </resources>
