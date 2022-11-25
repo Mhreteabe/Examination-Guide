@@ -121,16 +121,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         ImageView logoImageView = findViewById(R.id.logoImageView);
-        RelativeLayout backgroundLayout = findViewById(R.id.backgroundLayout);
         logoImageView.setOnClickListener(this);
-        backgroundLayout.setOnClickListener(this);
 
         passwordEditText.setOnKeyListener(this);
 
-        if(ParseUser.getCurrentUser()!=null){
+        /*if(ParseUser.getCurrentUser()!=null){
             Intent i = new Intent(getApplicationContext(),ExamsByYear.class);
             startActivity(i);
-        }
+        }*/
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
 

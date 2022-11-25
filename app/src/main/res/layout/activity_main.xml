@@ -4,53 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Math"
+        android:layout_margin="10dp"
+        android:background="@color/black"
         android:onClick="ViewByYear"
-        />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="Physics"
-        android:onClick="ViewByYear"
-        />
+        android:textColor="@color/teal_700" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/black"
+        android:onClick="ViewByYear"
+        android:text="Math"
+        android:textColor="@color/teal_700" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/black"
+        android:onClick="ViewByYear"
         android:text="Biology"
-        android:onClick="ViewByYear"
-        />
+        android:textColor="@color/teal_700" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/black"
+        android:onClick="ViewByYear"
         android:text="Chemistry"
-        android:onClick="ViewByYear"
-        />
+        android:textColor="@color/teal_700" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/black"
+        android:onClick="ViewByYear"
         android:text="Civics"
-        android:onClick="ViewByYear"
-        />
+        android:textColor="@color/teal_700" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@color/black"
+        android:onClick="ViewByYear"
         android:text="English"
-        android:onClick="ViewByYear"
-        />
+        android:textColor="@color/teal_700" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Aptitude"
+        android:layout_margin="10dp"
+        android:background="@color/black"
         android:onClick="ViewByYear"
-        />
-
-
+        android:text="Aptitude"
+        android:textColor="@color/teal_700" />
 
 
 </LinearLayout>
