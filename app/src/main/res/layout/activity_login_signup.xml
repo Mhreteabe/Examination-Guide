@@ -5,13 +5,14 @@
     android:id="@+id/backgroundLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
+    android:background="@android:color/darker_gray"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/logoImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         />
 
     <TextView
@@ -19,6 +20,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Matric Examination Guide"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:textColor="@color/teal_700"
         android:textSize="24sp" />
 
@@ -26,8 +29,9 @@
         android:id="@+id/usernameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:layout_gravity="center"
         android:ems="10"
+        android:layout_margin="20dp"
         android:hint="Enter username"
         android:inputType="textPersonName"
         android:minHeight="48dp" />
@@ -36,8 +40,8 @@
         android:id="@+id/passwordEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:background="@color/white"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:ems="10"
         android:hint="Enter a password"
         android:inputType="textPassword"
@@ -49,14 +53,19 @@
         android:layout_height="wrap_content"
         android:onClick="signUpClicked"
         android:text="Sign up"
+        android:layout_margin="20dp"
+        android:layout_gravity="center"
         android:textSize="24sp" />
 
     <TextView
         android:id="@+id/loginTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
         android:text="Or Login"
-        android:textColor="@color/black"
+        android:textColor="@color/teal_700"
         android:textSize="24sp" />
+
 
 </LinearLayout>

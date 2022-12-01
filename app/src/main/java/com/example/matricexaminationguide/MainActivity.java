@@ -125,10 +125,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         passwordEditText.setOnKeyListener(this);
 
-        /*if(ParseUser.getCurrentUser()!=null){
+        if(ParseUser.getCurrentUser()!=null){
             Intent i = new Intent(getApplicationContext(),ExamsByYear.class);
             startActivity(i);
-        }*/
+        }
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
 
