@@ -54,6 +54,7 @@ public class ExamDatabaseHelper extends SQLiteOpenHelper {
                 "year integer,"+
                 "question_no integer,"+
                 "answer integer);";
+
         //for nahom
         //you should use the following 2 tables to do the analysis
         String create_question_statistics_table="Create Table QuestionStatistics("+

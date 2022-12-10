@@ -24,6 +24,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class DisplayExam extends AppCompatActivity {
@@ -36,10 +39,13 @@ public class DisplayExam extends AppCompatActivity {
     RadioButton[] choices;
     TextView[] comments;
     LinearLayout linear;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_exam);
+
         Intent intent=getIntent();
         subject=intent.getStringExtra("subject").toLowerCase();
         year=intent.getStringExtra("year");
@@ -124,6 +130,8 @@ public class DisplayExam extends AppCompatActivity {
              //then we should reset the states
         }
     }
+
+
     public void updateQuestionStatisticsTable(int question_no,boolean is_correct){
         String []cols={"number_of_attempts","number_of_correct_attempts"};
         String where="subject=? and year=? and question_no=?";
@@ -168,6 +176,8 @@ public class DisplayExam extends AppCompatActivity {
         }
         }
 
+    ArrayList<Integer> question_no_correct=new ArrayList<>();
+    ArrayList<Integer> question_no_wrong=new ArrayList<>();
 
 
     public void showScore(View v){
@@ -176,6 +186,7 @@ public class DisplayExam extends AppCompatActivity {
         int correct=0;
         attempted=0;
         correct=0;
+
         String []cols={"question_no","answer"};
         String where="subject=? and year=?";
         String []where_vals= {subject,year};
@@ -199,14 +210,17 @@ public class DisplayExam extends AppCompatActivity {
                         comments[question_no-1].setText("Well done!");
                         comments[question_no-1].setGravity(Gravity.CENTER);
                         is_correct=true;
+                        question_no_correct.add(question_no);
                     }
                     else{
+
                         //since the user got the question wrong set the background color to red
                         answers[question_no-1].setBackgroundColor(Color.RED);
                         //give him an explanation
                         comments[question_no-1].setText("Try again");
                         comments[question_no-1].setGravity(Gravity.CENTER);
                         is_correct=false;
+                        question_no_wrong.add(question_no);
                     }
                     //we should update the QuestionStatistics table only if the question is attempted
                     updateQuestionStatisticsTable(question_no,is_correct);
@@ -219,13 +233,23 @@ public class DisplayExam extends AppCompatActivity {
          }
         //lets update our ExamStatisticsDatabase
         updateExamStatisticsTable(attempted,correct);
+
+
         //lets display the result to the user
-        TextView textView=findViewById(R.id.answer_display_area);
-        textView.setText("total questions:"+total_questions+"\n"+"attempted questions:"+attempted+"\n"+"correct:"+correct);
-        textView.setTextColor(Color.BLACK);
-        textView.setBackgroundColor(Color.WHITE);
-        textView.setGravity(Gravity.CENTER);
+//        TextView textView=findViewById(R.id.answer_display_area);
+//        textView.setText("total questions:"+total_questions+"\n"+"attempted questions:"+attempted+"\n"+"correct:"+correct);
+//        textView.setTextColor(Color.BLACK);
+//        textView.setBackgroundColor(Color.WHITE);
+//        textView.setGravity(Gravity.CENTER);
+
+        Button get_anaylsis =findViewById(R.id.get_anaylsis);
+                get_anaylsis.setVisibility(View.VISIBLE);
+
+
+
+
     }
+
     public void saveAndExit(View v){
         System.out.println("in save and exit");
         for(int i=0;i<answers.length;i++){
@@ -239,6 +263,7 @@ public class DisplayExam extends AppCompatActivity {
                 values.put("question_no",String.valueOf(i+1));
                 values.put("answer",String.valueOf(ans_index));
                 databaseHelper.insert(db,"UserState",values);
+
             }
         }
         Intent i=new Intent(this,ExamsByYear.class);
@@ -246,5 +271,18 @@ public class DisplayExam extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void ShowQuestionStatisticsTable(View view){
+
+        Intent in=new Intent(DisplayExam.this,SIngleSubjectAnalysis.class);
+        in.putExtra("subject",subject);
+        in.putExtra("year",year);
+        in.putExtra("wrong",question_no_wrong);
+        in.putExtra("correct",question_no_correct);
+        startActivity(in);
+
+        }
+
+
 
 }
+

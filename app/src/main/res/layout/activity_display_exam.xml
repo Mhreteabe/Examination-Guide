@@ -31,12 +31,22 @@
                 android:paddingLeft="20dp"
                 />
         </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/answer_display_area"
             android:textColor="#FF0000"
+        />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Analysis"
+            android:visibility="invisible"
+            android:onClick="ShowQuestionStatisticsTable"
+            android:id="@+id/get_anaylsis"
             />
+
     </LinearLayout>
     <ScrollView
         android:layout_width="match_parent"

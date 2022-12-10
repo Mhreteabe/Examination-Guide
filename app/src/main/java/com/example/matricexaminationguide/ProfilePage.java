@@ -6,56 +6,42 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class ProfilePage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_profile_page);
 
         //initalize and assign variable
         BottomNavigationView bottomNavigationView= findViewById(R.id.bottom_navigation);
 
         //set home selected
-        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setSelectedItemId(R.id.profile);
 
         //perform itemselectedlistner
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
+                    case R.id.profile:
+                        return true;
                     case R.id.home:
+                        Intent i=new Intent(ProfilePage.this,MainActivity.class);
+                        startActivity(i);
+                        overridePendingTransition(0,0);
                         return true;
                     case R.id.analysis:
-                    Intent i=new Intent(MainActivity.this,AllSubjectAnalysis.class);
-                    startActivity(i);
-                    overridePendingTransition(0,0);
-                    return true;
-
-                    case R.id.profile:
-                        Intent a=new Intent(MainActivity.this,ProfilePage.class);
+                        Intent a=new Intent(ProfilePage.this,AnalysisPage.class);
                         startActivity(a);
                         overridePendingTransition(0,0);
                         return true;
-
-
-            }
+                }
                 return false;
             }
         });
-
-
-
     }
-
-    public  void allsubject(View v){
-        Intent i=new Intent(MainActivity.this,AllSubject.class);
-        startActivity(i);
-    }
-
 }

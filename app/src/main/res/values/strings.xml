@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">matric examination guide</string>
+    <string-array name="years">
+        <item>Select year</item>
+        <item>2010</item>
+        <item>2011</item>
+        <item>2012</item>
+        <item>2013</item>
+        <item>2014</item>
+    </string-array>
 </resources>
